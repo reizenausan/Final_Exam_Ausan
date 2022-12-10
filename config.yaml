@@ -1,0 +1,56 @@
+---
+
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: Install Updates (Ubuntu)
+    tags: always
+    apt:
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Install Updates (CentOS)
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+- hosts: workstations
+  become: true
+  tasks:
+
+  - name: Install Apache in Ubuntu
+    apt:
+      name:
+        - apache2
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Install Apache in CentOS
+    dnf:
+      name:
+        - httpd
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+  - name: Install Nagios in Ubuntu
+    apt:
+      name:
+        - nagios4
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: Install Nagios in CentOS
+    dnf:
+      name:
+        - nagios
+      state: latest
+    when: ansible_distribution == "CentOS"
+
+- name: Change Motd
+  debug:
+    msg: "Ansible Managed by Ausan"
